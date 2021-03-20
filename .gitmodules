@@ -1,0 +1,3 @@
+[submodule "arduino/main/library/BlinkSuite-Arduino"]
+	path = arduino/main/library/BlinkSuite-Arduino
+	url = https://github.com/141592653/BlinkSuite-Arduino.git
