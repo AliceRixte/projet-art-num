@@ -1,3 +1,7 @@
+#include <BlinkBase.h>
+#include <BlinkPin.h>
+#include <BlinkShiftRegister.h>
+
 #include "debug.h"
 
 int interval = 1000;
@@ -15,8 +19,5 @@ void loop() {
   if (currentTime - previousTime >= interval) {
     previousTime = currentTime;
 
-#ifdef DEBUG
-    debugBlink();
-#endif
   }
 }
