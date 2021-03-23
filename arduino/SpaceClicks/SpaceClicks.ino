@@ -1,23 +1,25 @@
-#include <BlinkBase.h>
 #include <BlinkPin.h>
-#include <BlinkShiftRegister.h>
-
 #include "debug.h"
 
-int interval = 1000;
-unsigned long previousTime = millis();
+//#define DEBUG 
+#ifdef DEBUG
+  #define BLINKDEBUG 
+#endif
+
+unsigned int delays[2] = {1000,500};
+
+BlinkPin blinker(2,delays,2);
 
 void setup() {
 #ifdef DEBUG
+  Serial.begin(9600);
+  Serial.println("Debug initiated !");
   pinMode(LED_BUILTIN, OUTPUT);
 #endif
+
+  blinker.begin();
 }
 
 void loop() {
-  unsigned long currentTime = millis();
-
-  if (currentTime - previousTime >= interval) {
-    previousTime = currentTime;
-
-  }
+  blinker.update();
 }

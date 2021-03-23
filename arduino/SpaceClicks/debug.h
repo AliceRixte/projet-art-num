@@ -1,5 +1,4 @@
-//#define DEBUG 1
-
+#pragma once
 #ifdef DEBUG
 void debugBlink();
 #endif
