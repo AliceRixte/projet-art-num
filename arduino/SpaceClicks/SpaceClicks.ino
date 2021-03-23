@@ -6,9 +6,9 @@
   #define BLINKDEBUG 
 #endif
 
-unsigned int delays[2] = {1000,500};
+unsigned int delays[1] = {400};
 
-BlinkPin blinker(2,delays,2);
+BlinkPin blinker(2,delays,1,50);
 
 void setup() {
 #ifdef DEBUG
@@ -17,6 +17,7 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 #endif
 
+  randomSeed(analogRead(0));
   blinker.begin();
 }
 
