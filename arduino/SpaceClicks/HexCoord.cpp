@@ -21,3 +21,17 @@ float distanceCart(const position& cartPos1, const position& cartPos2){
 float gaussian(const float d, const float mean, const float variance){
   return exp( (sq(mean) - sq(d - mean)) / (2 * variance) );
 }
+
+position polarToCart(polarPosition polarPos, position center){
+   position cartPos;
+   cartPos.x = cos(polarPos.theta) * polarPos.r + center.x;
+   cartPos.y = sin(polarPos.theta) * polarPos.r + center.y;
+   return cartPos;
+}
+
+position polarToCart(polarPosition polarPos){
+   position cartPos;
+   cartPos.x = cos(polarPos.theta) * polarPos.r ;
+   cartPos.y = sin(polarPos.theta) * polarPos.r ;
+   return cartPos;
+}

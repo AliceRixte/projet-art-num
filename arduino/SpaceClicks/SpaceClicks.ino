@@ -1,19 +1,16 @@
 #include <BlinkPin.h>
 #include "debug.h"
 #include "HexCoord.h"
+#include "Examples.hpp"
 
-#define DEBUG 
+//#define DEBUG 
 #ifdef DEBUG
   #define BLINKDEBUG 
 #endif
 
-#define REFRESH_DELAY 200
-
-
-
-float mult = 4;
-
+#define REFRESH_DELAY 4
 SoftTimer refreshTimer;
+long int discreteTime = 0;
 
 #define BLINKER_NB 11
 int pins[BLINKER_NB];
@@ -55,7 +52,7 @@ void initializePosBlink(){
 
 BlinkPin blinkers[BLINKER_NB];
 #define SEQUENCE_LENGTH 1
-unsigned int sequence[SEQUENCE_LENGTH] = {REFRESH_DELAY * 3};
+unsigned int sequence[SEQUENCE_LENGTH] = {41};
 
 void initializeBlinkers(){
   for(int i = 0; i < BLINKER_NB; i++){
@@ -66,32 +63,43 @@ void initializeBlinkers(){
   blinkers[5].begin();
   blinkers[7].begin();
   blinkers[10].begin();
-  delay(REFRESH_DELAY);
+  //delay(REFRESH_DELAY);
   blinkers[1].begin();
   blinkers[6].begin();
   blinkers[8].begin();
-  delay(REFRESH_DELAY);
+  //delay(REFRESH_DELAY);
   blinkers[2].begin();
   blinkers[4].begin();
   blinkers[9].begin();
 }
 
-position currentPos;
+#define ENTITY_NB 1
+SoundEntity soundEntities[ENTITY_NB] = {circularEntity };
 
 void updateBlinkers(){
-  float distance = 0.0;
+
   for( int i = 0; i < BLINKER_NB; i++){
-    distance = distanceCart(currentPos, posBlink[i]);
-#ifdef DEBUG
-    Serial.print("Distance avec l'objet");
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.print(distance);
-    Serial.print("; Blinking probability : ");
-    Serial.println(gaussian(distance, 0, 5) * 100);
-#endif
-    blinkers[i].setBlinkProba(gaussian(distance, 0, 5) * 100);
+    float newProba = 0.0;
+    float newMult = 1.0;
+    for( int j = 0; j < ENTITY_NB; j++){
+      newProba += gaussian(distanceCart(soundEntities[j].getPosition(discreteTime),posBlink[i]),
+        0,
+        soundEntities[j].diffuseness
+      );
+      newMult *= soundEntities[j].getMult(discreteTime);
+    }
+    blinkers[i].setBlinkProba(newProba * 100);
+    blinkers[i].setDelayMultiplier(newMult);
     blinkers[i].update();
+#ifdef DEBUG
+      Serial.print("New proba for");
+      Serial.print(i);
+      Serial.print(" : ");
+      Serial.print(newProba * 100);
+      Serial.print("; Multiplier factor : ");
+      Serial.println(newMult);
+#endif
+
   }
 }
 
@@ -112,26 +120,21 @@ void setup() {
   initializePinsNano();
   initializePosBlink();
   initializeBlinkers();
+  updateBlinkers();
 
-  position hexPos;
-  hexPos.x = 1;
-  hexPos.y = 1;
-  currentPos = hexToCart(hexPos);
 }
 
 
 
 void loop() {
   updateBlinkers();
-  blinkers[0].update();
 
   if (refreshTimer.hasTimedOut())
   {
     #ifdef DEBUG
       Serial.println("[Main] Refresh ! ");
     #endif
-    
-    
     refreshTimer.reset();
+    discreteTime++ ;
   }
 }
