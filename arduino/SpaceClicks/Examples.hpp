@@ -9,10 +9,10 @@ typedef struct SoundEntity
 } SoundEntity;
 
 position constPos(long unsigned int discreteTime){
-  position cartPos;
-  cartPos.x = -1.0;
-  cartPos.y = 0.0;
-  return cartPos;
+  position hexPos;
+  hexPos.x = 0.0;
+  hexPos.y = 1.0;
+  return hexToCart(hexPos);
 }
 
 float constMult(long unsigned int discreteTime){
@@ -34,11 +34,11 @@ position circularMove(long unsigned int discreteTime){
 
 float circularMult(long unsigned int discreteTime){
 
-  return 1 + (0.6 * cos(PI * discreteTime / 210));
+  return 1 + (0.4 * cos(PI * discreteTime / 210));
 }
 
 SoundEntity circularEntity{ 
   .getPosition = circularMove,
   .getMult = circularMult,
-  .diffuseness = 0.3
+  .diffuseness = 1.0
 };
